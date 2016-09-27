@@ -22,7 +22,7 @@ var containers = [];
 var port = process.env.PORT || 80; // set our port
 
 // CONNECT DB
-mongoose.connect('mongodb://127.0.0.1:27017/myhealth'); // connect to our database
+mongoose.connect('mongodb://127.0.0.1:10000/myhealth'); // connect to our database
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -46,27 +46,21 @@ router.use(function(req, res, next) {
     next(); // make sure we go to the next routes and don't stop here
 });
 
-router.route('/compile')
+router.route('/login')
     .post(function(req, res) {
-        request({
-            url: req.body.url,
-            json: true,
-            method: 'POST',
-            maxAttempts: 3,
-            retryDelay: 2000,
-            body: {
-                code: req.body.code.trim()
-            }
-        }, function(err, httpResponse, body) {
-            if (err) {
-                console.log(err);
-                res.status(500).json({
-                    message: err
-                });
+        User.findOne({'uname': req.body.uname}, function (err, user) {
+            console.log(user);
+            console.log(req.body);
+            if(user != null) {
+                console.log(user.password + "-" + req.body.password);
+                if(user.password === req.body.password) {
+                    var key = generateKey();
+                    res.send({'success':true, 'key':key});
+                } else {
+                    res.send({'success':false});
+                }
             } else {
-                res.json({
-                    message: body.message
-                });
+                res.send({'success':false,'message':"User not found ["+err+"]"});
             }
         });
     });
@@ -104,6 +98,12 @@ console.log('[SERVER] Listening on port ' + port);
 
 // Misc. Functions
 function generateKey() {
-    return uuid.v4();
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
 }
 
