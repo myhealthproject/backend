@@ -16,6 +16,7 @@ var restful = require('node-restful');
 var async = require('async');
 var mongoose = restful.mongoose;
 var User = require('./models/user');
+var Bill = require('./models/bill');
 
 // GLOBAL VARS
 var containers = [];
@@ -55,7 +56,7 @@ router.route('/login')
                 console.log(user.password + "-" + req.body.password);
                 if(user.password === req.body.password) {
                     var key = generateKey();
-                    res.send({'success':true, 'key':key});
+                    res.send({'success':true, 'key':key, 'user':user});
                 } else {
                     res.send({'success':false});
                 }
@@ -65,7 +66,7 @@ router.route('/login')
         });
     });
 
-var models = [User];
+var models = [User, Bill];
 models.forEach(function(model) {
     console.log("[MONGO] Register " + model.modelName);
     model.before('post', authRest).before('put', authRest).before('delete', authRest);

@@ -1,12 +1,9 @@
-// app/models/challenge.js
-
-
 var restful = require('node-restful');
 var mongoose = restful.mongoose;
 var Schema       = mongoose.Schema;
 
 var UserSchema   = new Schema({
-    uname: {type: 'String', required: true},
+    uname: {type: 'String', required: true, unique:true},
     fname: {type: 'String', required: true},
     lname: {type: 'String', required: true},
     password: {type: 'String', required: true}
