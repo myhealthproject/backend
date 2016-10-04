@@ -76,19 +76,22 @@ models.forEach(function(model) {
 });
 
 function authRest(req, res, next) {
-    if(req.headers['token'] !== null) {
+    if(req.get('token')) {
         console.log("---------------------------------------");
-        console.log(req.headers['token']);
+        console.log(req.get('token'));
+        console.log(authTokens.indexOf(req.get('token')));
         console.log("---------------------------------------");
-        if (authTokens.indexOf(req.headers['token']) !== null) {
+        if (authTokens.indexOf(req.get('token')) !== -1) {
             next();
         } else {
             res.status(403).send({
                 error: "ACCES DENIED"
             });
         }
+    } else {
+        next();//TODO REDO AUTH
     }
-    next();//TODO REDO AUTH
+
 }
 
 // REGISTER OUR ROUTES -------------------------------
