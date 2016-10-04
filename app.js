@@ -68,12 +68,12 @@ router.route('/login')
         });
     });
 
-var models = [User, Bill];
-models.forEach(function(model) {
-    console.log("[MONGO] Register " + model.modelName);
-    model.before('post', authRest).before('put', authRest).before('delete', authRest).before('get',authRest);
-    model.register(app, '/api/' + model.modelName);
-});
+console.log("[MONGO] Register " + Bill.modelName);
+Bill.before('post', authRest).before('put', authRest).before('delete', authRest).before('get',authRest);
+Bill.register(app, '/api/' + Bill.modelName);
+console.log("[MONGO] Register " + User.modelName);
+User.before('put', authRest).before('delete', authRest).before('get',authRest);
+User.register(app, '/api/' + User.modelName);
 
 function authRest(req, res, next) {
     if(req.get('token')) {
