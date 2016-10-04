@@ -87,8 +87,8 @@ function authRest(req, res, next) {
                 error: "ACCES DENIED"
             });
         }
-        next();//TODO REDO AUTH
     }
+    next();//TODO REDO AUTH
 }
 
 // REGISTER OUR ROUTES -------------------------------
