@@ -21,6 +21,7 @@ var Bill = require('./models/bill');
 // GLOBAL VARS
 var containers = [];
 var port = process.env.PORT || 80; // set our port
+var authTokens = [];
 
 // CONNECT DB
 mongoose.connect('mongodb://127.0.0.1:10000/myhealth'); // connect to our database
@@ -56,6 +57,7 @@ router.route('/login')
                 console.log(user.password + "-" + req.body.password);
                 if(user.password === req.body.password) {
                     var key = generateKey();
+                    authTokens.push(key);
                     res.send({'success':true, 'key':key, 'user':user});
                 } else {
                     res.send({'success':false});
@@ -69,21 +71,21 @@ router.route('/login')
 var models = [User, Bill];
 models.forEach(function(model) {
     console.log("[MONGO] Register " + model.modelName);
-    model.before('post', authRest).before('put', authRest).before('delete', authRest);
+    model.before('post', authRest).before('put', authRest).before('delete', authRest).before('get',authRest);
     model.register(app, '/api/' + model.modelName);
 });
 
 function authRest(req, res, next) {
     console.log("---------------------------------------");
-    console.log(req.body);
+    console.log(req.headers['token']);
     console.log("---------------------------------------");
-    //if (req.body.token == "supersecret") {
-    //    next();
-    //} else {
-    //    res.status(403).send({
-    //        error: "ACCES DENIED"
-    //    });
-    //}
+    if (authTokens.includes(req.headers['token'])) {
+        next();
+    } else {
+        res.status(403).send({
+            error: "ACCES DENIED"
+        });
+    }
     next();//TODO REDO AUTH
 }
 
