@@ -68,6 +68,20 @@ router.route('/login')
         });
     });
 
+router.route('/getbillsbyuserid/:userid')
+    .get(function(req, res) {
+        Bill.find({'userid': req.params.userid}, function (err, bills) {
+            console.log(bills);
+            console.log(req.body);
+            if(bills != null) {
+                res.send({'bills':bills});
+            } else {
+                res.send({'bills':bills,'message':"No bills found ["+err+"]"});
+            }
+        });
+    });
+
+//REGISTER MODELS FOR REST API
 console.log("[MONGO] Register " + Bill.modelName);
 Bill.before('post', authRest).before('put', authRest).before('delete', authRest).before('get',authRest);
 Bill.register(app, '/api/' + Bill.modelName);
@@ -78,8 +92,8 @@ User.register(app, '/api/' + User.modelName);
 function authRest(req, res, next) {
     if(req.get('token')) {
         console.log("---------------------------------------");
-        console.log(req.get('token'));
-        console.log(authTokens.indexOf(req.get('token')));
+        console.log("Request token:"+req.get('token'));
+        console.log("Index of key:"+authTokens.indexOf(req.get('token')));
         console.log("---------------------------------------");
         if (authTokens.indexOf(req.get('token')) !== -1) {
             next();
