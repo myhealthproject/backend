@@ -5,12 +5,10 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // Avoids DEPTH_ZERO_SELF_SIGNED
 // call the packages we need
 var express = require('express');
 var app = express();
-var async = require('async');
 var bodyParser = require('body-parser');
 var events = require('events');
 var request = require('requestretry');
 var http = require('http');
-var eventEmitter = new events.EventEmitter();
 var path = require('path');
 var restful = require('node-restful');
 var async = require('async');
@@ -19,7 +17,6 @@ var User = require('./models/user');
 var Bill = require('./models/bill');
 
 // GLOBAL VARS
-var containers = [];
 var port = process.env.PORT || 80; // set our port
 var authTokens = [];
 
@@ -68,6 +65,7 @@ router.route('/login')
         });
     });
 
+//ENDPOINT FOR RETURNING
 router.route('/getbillsbyuserid/:userid')
     .get(function(req, res) {
         Bill.find({'userid': req.params.userid}, function (err, bills) {
@@ -89,6 +87,7 @@ console.log("[MONGO] Register " + User.modelName);
 User.before('put', authRest).before('delete', authRest).before('get',authRest);
 User.register(app, '/api/' + User.modelName);
 
+//CHECK TO BE RUN BEFORE AUTHENTICATED END POINTS
 function authRest(req, res, next) {
     if(req.get('token')) {
         console.log("---------------------------------------");
@@ -112,13 +111,16 @@ function authRest(req, res, next) {
 // all of our routes will be prefixed with /api
 app.use('/api', router);
 
+// SET APP DIRECTORY
 app.use(express.static(__dirname + '/app'));
+
 // START THE SERVER
 // =============================================================================
 app.listen(port);
 console.log('[SERVER] Listening on port ' + port);
 
 // Misc. Functions
+
 function generateKey() {
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
