@@ -42,6 +42,7 @@ router.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Headers', 'token');
     next(); // make sure we go to the next routes and don't stop here
 });
 
@@ -120,7 +121,6 @@ app.listen(port);
 console.log('[SERVER] Listening on port ' + port);
 
 // Misc. Functions
-
 function generateKey() {
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
