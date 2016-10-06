@@ -41,8 +41,7 @@ router.use(function(req, res, next) {
     console.log(req.method + req.url);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Content-Type');
-    res.setHeader('Access-Control-Allow-Headers', 'token');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Content-Type, token');
     next(); // make sure we go to the next routes and don't stop here
 });
 
